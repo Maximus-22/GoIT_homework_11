@@ -51,7 +51,7 @@ def handler_com_help(*args):
     introduse = "This is pocket phonebook.\n" \
                 "For exit write [\"close\", \"exit\", \"goodbye\"].\n" \
                 "Available Commands [\"add Name Phone\", \"change Name Phone\", \"help\", \"phone Name\",\n" \
-                "\"remove Name Phone\", \"showall\", \"birthday Name dd/mm/yyyy\"]."
+                "\"remove Name Phone\", \"showall\", \"birthday Name dd/mm/yyyy\", \"day Name\"]."
     print(Fore.YELLOW + introduse)
 
 
