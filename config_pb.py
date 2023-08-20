@@ -96,7 +96,29 @@ class Record:
             return None
 
 
+class AddressBookIterator:
+
+    def __init__(self, address_book):
+        self.address_book = address_book
+        self.current_index = 0
+
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if self.current_index >= len(self.address_book.data):
+            raise StopIteration
+        else:
+            keys = list(self.address_book.data.keys())
+            record = self.address_book.data[keys[self.current_index]]
+            self.current_index += 1
+            return record
+
+
 class AddressBook(UserDict):
+
+    def __iter__(self):
+        return AddressBookIterator(self)
 
     def add_record(self, record: Record):
         # Record.name -> Record(Name(name)) -> Record.name.name
@@ -132,12 +154,29 @@ class AddressBook(UserDict):
             phones = ", ".join([phone.phone for phone in record.phones])
             print(f"Contact {name} has phone: {phones}") 
 
-    def show_addressbook(self):
-        # for name.name in sorted(self.data):
-        for name in sorted(self.data):
-            record = self.data[name]
-            phones = ", ".join([phone.phone for phone in record.phones])
-            print("{:<20} | {:^14} | --> {:<15}".format(name, record.birthday.birthday, phones))
+    # def show_addressbook(self):
+        # for name in sorted(self.data):
+        #     record = self.data[name]
+        #     phones = ", ".join([phone.phone for phone in record.phones])
+        #     print("{:<20} | {:^14} | --> {:<15}".format(name, record.birthday.birthday, phones))
+    def show_addressbook(self, address_book):
+        iterator = iter(address_book)
+        page_size = 10  # Розмір сторінки
+        while 1:
+            try:
+                for _ in range(page_size):
+                    record = next(iterator)
+                    # Виведення запису
+                    if record.birthday:
+                        print("{:<20} | {:^14} | --> {:<15}".format(record.name.name, 
+                                                                    record.birthday.birthday,
+                                                                    ", ".join([phone.phone for phone in record.phones])))
+                    else:
+                        print("{:<20} | {:^14} | --> {:<15}".format(record.name.name,
+                                                                    "",
+                                                                    ", ".join([phone.phone for phone in record.phones])))
+            except StopIteration:
+                break
 
     def open_addressbook(self, file_name: str):
         if os.path.exists(file_name):
@@ -158,7 +197,11 @@ class AddressBook(UserDict):
                 record = self.data[name]
                 phones = ",".join([phone.phone for phone in record.phones])
                 # file.write(f"{record.name.name};{phones}\n")
-                file.write(f"{name};{phones};{record.birthday.birthday}\n")
+                # if record.birthday != "":
+                if record.birthday:
+                    file.write(f"{name};{phones};{record.birthday.birthday}\n")
+                else:
+                    file.write(f"{name};{phones};\n")
 
 
 

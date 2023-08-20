@@ -39,7 +39,7 @@ def handler_com_phone(name: str, *args):
 def handler_com_showall(*args):
     init(autoreset = True)
     print(Fore.YELLOW + "Current list of all contacts:")
-    address_book.show_addressbook()
+    address_book.show_addressbook(address_book)
 
 
 def handler_com_help(*args):
