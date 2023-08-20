@@ -47,8 +47,9 @@ class Birthday(Field):
     @birthday.setter
     def birthday(self, birthday: str):
         if birthday != "":
-            db_day, db_month, db_year = map(int, birthday.split('/'))
-            if datetime(year = db_year, month = db_month, day = db_day):
+            db_day, db_month, db_year = birthday.split('/')
+            if 1 <= int(db_day) <= 31 and 1 <= int(db_month) <= 12 and int(db_year) > 1900:
+            # if datetime(year = db_year, month = db_month, day = db_day):
                self.__private_birthday = birthday
             else:
                 raise Exception("You entered wrong date of birth!\n\
@@ -137,9 +138,6 @@ class AddressBook(UserDict):
         if record.name.name in self.data:
             existing_record = self.data[record.name.name]
             existing_record.add_birthday(record.birthday.birthday)
-            # for tel in record.phones:
-            #     existing_record.add_phone(tel.phone)
-            # existing_record.add_phone(record.phones[0])
         else:
             self.data[record.name.name] = record
 
