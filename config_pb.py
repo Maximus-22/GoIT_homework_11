@@ -22,11 +22,11 @@ class Phone(Field):
         self.phone = phone
 
     @property
-    def value(self):
+    def phone(self):
         return self.__private_phone
     
-    @value.setter
-    def value(self, phone: str):
+    @phone.setter
+    def phone(self, phone: str):
         if phone != "" and phone.isdigit() and len(phone) >= 10:
             self.__private_phone = phone
         else:
@@ -41,11 +41,11 @@ class Birthday(Field):
         self.birthday = birthday
 
     @property
-    def value(self):
+    def birthday(self):
         return self.__private_birthday
     
-    @value.setter
-    def value(self, birthday: str):
+    @birthday.setter
+    def birthday(self, birthday: str):
         if birthday != "":
             db_day, db_month, db_year = map(int, birthday.split('/'))
             if datetime(year = db_year, month = db_month, day = db_day):
