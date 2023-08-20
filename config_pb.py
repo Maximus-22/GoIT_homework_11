@@ -247,12 +247,12 @@ if __name__ == "__main__":
     record4.add_birthday("03/12/1981")
     address_book.add_record(record4)
 
-    address_book.show_addressbook()
+    address_book.show_addressbook(address_book)
     address_book.close_addressbook(file_name)
 
     assert isinstance(address_book["Kim"], Record)
     assert isinstance(address_book["Kim"].name, Name)
     assert isinstance(address_book["Kim"].phones, list)
     assert isinstance(address_book["Kim"].phones[0], Phone)
-    assert address_book["Kim"].phones[0].phone == "0976312904"
+    assert address_book["Kim"].phones[2].phone == "0976312904"
     assert address_book["Kim"].birthday.birthday == "03/12/1981"
