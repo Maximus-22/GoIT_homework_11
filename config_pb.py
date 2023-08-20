@@ -48,12 +48,23 @@ class Birthday(Field):
     def birthday(self, birthday: str):
         if birthday != "":
             db_day, db_month, db_year = birthday.split('/')
-            if 1 <= int(db_day) <= 31 and 1 <= int(db_month) <= 12 and int(db_year) > 1900:
-            # if datetime(year = db_year, month = db_month, day = db_day):
-               self.__private_birthday = birthday
+            if db_day.isdigit() and db_month.isdigit() and db_year.isdigit():
+                if 1 <= int(db_day) <= 31 and 1 <= int(db_month) <= 12 and int(db_year) > 1900:
+                    self.__private_birthday = birthday
+                else:
+                    raise Exception("You entered wrong date of birth!\n\
+                                     Format date of birth is [dd/mm/yyyy].")
             else:
                 raise Exception("You entered wrong date of birth!\n\
-                                Format date of birth is [dd/mm/yyyy].")
+                                 Format date of birth is [dd/mm/yyyy].")
+        # else:
+        #     self.__private_birthday = ""
+            # if 1 <= int(db_day) <= 31 and 1 <= int(db_month) <= 12 and int(db_year) > 1900:
+            # # if datetime(year = db_year, month = db_month, day = db_day):
+            #     self.__private_birthday = birthday
+            # else:
+            #     raise Exception("You entered wrong date of birth!\n\
+            #                     Format date of birth is [dd/mm/yyyy].")
 
 
 class Record:
