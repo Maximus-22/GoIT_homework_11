@@ -152,7 +152,17 @@ class AddressBook(UserDict):
         if name in self.data:
             record = self.data[name]
             phones = ", ".join([phone.phone for phone in record.phones])
-            print(f"Contact {name} has phone: {phones}") 
+            print(f"Contact {name} has phone: {phones}")
+
+    def show_day_to_birthday(self, name):
+        # Record.name -> Record(Name(name)) -> Record.name.name
+        # { Record.name.name : Record() }
+        if name in self.data:
+            record = self.data[name]
+            if record.birthday:
+                print(f"{name} was born {record.birthday.birthday}, he (she) birthday will be in {record.days_to_birthday()} days.")
+            else:
+                print(f"There is no birthday date for {name}.")
 
     # def show_addressbook(self):
         # for name in sorted(self.data):

@@ -23,6 +23,10 @@ def handler_com_add_birthday(name: str, birthday: str, *args):
     print(f"Birthday {birthday} was successfully added to Contact {name}.")
 
 
+def handler_com_day_to_birthday(name: str, *args):
+    address_book.show_day_to_birthday(name)
+
+
 def handler_com_change(name: str, phone: str, *args):
     print(f"Contact {name} with number {phone} was successfully changed.")
 
@@ -46,9 +50,8 @@ def handler_com_help(*args):
     init(autoreset = True)
     introduse = "This is pocket phonebook.\n" \
                 "For exit write [\"close\", \"exit\", \"goodbye\"].\n" \
-                "Available commands [\"add Name Phone\", \"change Name Phone\",\n" \
-                "\"help\", \"phone Name\", \"remove Name Phone\", \"showall\",\n" \
-                "\"birthday Name dd/mm/yyyy\"]."
+                "Available Commands [\"add Name Phone\", \"change Name Phone\", \"help\", \"phone Name\",\n" \
+                "\"remove Name Phone\", \"showall\", \"birthday Name dd/mm/yyyy\"]."
     print(Fore.YELLOW + introduse)
 
 
@@ -60,7 +63,7 @@ def handler_com_exit(*args):
 COMMANDS = {"add": handler_com_add, "change": handler_com_change, "close": handler_com_exit,\
             "exit": handler_com_exit, "goodbye": handler_com_exit, "help": handler_com_help,\
             "phone": handler_com_phone, "remove": handler_com_remove, "showall": handler_com_showall,
-            "birthday": handler_com_add_birthday}
+            "birthday": handler_com_add_birthday, "day": handler_com_day_to_birthday}
 
 
 def input_error(get_handler):
@@ -146,8 +149,8 @@ def main():
         if not command_input:
             continue
         
-        (command, name, phone) = command_parser(command_input)
-        get_handler(command, name, phone)
+        (command, name, value) = command_parser(command_input)
+        get_handler(command, name, value)
         
         if command in ("exit", "close", "goodbye"):
             address_book.close_addressbook(file_name)  
