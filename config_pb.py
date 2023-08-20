@@ -79,6 +79,7 @@ class Record:
 
     def add_birthday(self, birthday: str):
         self.birthday = Birthday(birthday)
+        # self.birthday = birthday
 
     def days_to_birthday(self):
         if self.birthday:
@@ -108,6 +109,18 @@ class AddressBook(UserDict):
         else:
             self.data[record.name.name] = record
 
+    def save_birthday(self, record: Record):
+        # Record.name -> Record(Name(name)) -> Record.name.name
+        # { Record.name.name : Record() }
+        if record.name.name in self.data:
+            existing_record = self.data[record.name.name]
+            existing_record.add_birthday(record.birthday.birthday)
+            # for tel in record.phones:
+            #     existing_record.add_phone(tel.phone)
+            # existing_record.add_phone(record.phones[0])
+        else:
+            self.data[record.name.name] = record
+
     def edit_record(self, name, phone):
         if name in self.data:
             record = self.data[name]
@@ -124,17 +137,19 @@ class AddressBook(UserDict):
         for name in sorted(self.data):
             record = self.data[name]
             phones = ", ".join([phone.phone for phone in record.phones])
-            print("{:<20} -> {:<15}".format(name, phones))
+            print("{:<20} | {:^14} | --> {:<15}".format(name, record.birthday.birthday, phones))
 
     def open_addressbook(self, file_name: str):
         if os.path.exists(file_name):
             with open(file_name, "r", encoding = "UTF-8") as file:
                 for line in file:
-                    name, file_phones = line.strip().split(';')
+                    name, file_phones, birthday = line.strip().split(';')
                     # record = Record(Name(name))
                     record = Record(name)
                     for tel in file_phones.split(','):
                         record.add_phone(tel)
+                    if birthday:
+                        record.add_birthday(birthday)
                     self.add_record(record)
 
     def close_addressbook(self, file_name: str):
@@ -143,7 +158,7 @@ class AddressBook(UserDict):
                 record = self.data[name]
                 phones = ",".join([phone.phone for phone in record.phones])
                 # file.write(f"{record.name.name};{phones}\n")
-                file.write(f"{name};{phones}\n")
+                file.write(f"{name};{phones};{record.birthday.birthday}\n")
 
 
 

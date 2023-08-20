@@ -1,6 +1,6 @@
 # import os
 from colorama import init, Fore
-from config_pb import Name, Phone, Email, Record, AddressBook
+from config_pb import Name, Phone, Birthday, Record, AddressBook
 from sanitaze_phone_number import sanitaze_phone_number as sphn
 
 
@@ -14,6 +14,13 @@ def handler_com_add(name: str, phone: str, *args):
     record.add_phone(phone)
     address_book.add_record(record)
     print(f"Contact {name} with number {phone} was successfully added.")
+
+
+def handler_com_add_birthday(name: str, birthday: str, *args):
+    record = Record(name)
+    record.add_birthday(birthday)
+    address_book.save_birthday(record)
+    print(f"Birthday {birthday} was successfully added to Contact {name}.")
 
 
 def handler_com_change(name: str, phone: str, *args):
@@ -40,7 +47,8 @@ def handler_com_help(*args):
     introduse = "This is pocket phonebook.\n" \
                 "For exit write [\"close\", \"exit\", \"goodbye\"].\n" \
                 "Available commands [\"add Name Phone\", \"change Name Phone\",\n" \
-                "\"help\", \"phone Name\", \"remove Name Phone\", \"showall\"]."
+                "\"help\", \"phone Name\", \"remove Name Phone\", \"showall\",\n" \
+                "\"birthday Name dd/mm/yyyy\"]."
     print(Fore.YELLOW + introduse)
 
 
@@ -51,7 +59,8 @@ def handler_com_exit(*args):
 
 COMMANDS = {"add": handler_com_add, "change": handler_com_change, "close": handler_com_exit,\
             "exit": handler_com_exit, "goodbye": handler_com_exit, "help": handler_com_help,\
-            "phone": handler_com_phone, "remove": handler_com_remove, "showall": handler_com_showall}
+            "phone": handler_com_phone, "remove": handler_com_remove, "showall": handler_com_showall,
+            "birthday": handler_com_add_birthday}
 
 
 def input_error(get_handler):
@@ -69,7 +78,7 @@ def input_error(get_handler):
         except ValueError:
             init(autoreset = True)
             print(Fore.YELLOW + "Oops! Value Error. \n" \
-                  "Invalid command parameters. Please, enter valid Name or Phone.")
+                  "Invalid command parameters. Please, enter valid Name or Phone [Birthday].")
         except IndexError:
             init(autoreset = True)
             print(Fore.YELLOW + "Oops! Index Error.\n" \
@@ -82,16 +91,18 @@ def get_handler(command: str, name: str, phone: str):
     return COMMANDS[command](name, phone)
 
 
-def command_validator(command, name, phone):
+def command_validator(command, name, value):    # з командою [birthday] приходить "dd/mm/yyyy"
     if command not in COMMANDS:
         error = KeyError
-    elif command in ("add", "change", "remove") and (name is None or phone is None):
+    elif command in ("add", "change", "remove", "birthday") and (name is None or value is None):
         error = IndexError
     elif command == "phone" and name is None:
         error = IndexError
-    elif command in ("add", "change", "remove") and not (name.isalpha() and phone.isdigit() and len(phone) >= 10):
+    elif command in ("add", "change", "remove") and not (name.isalpha() and value.isdigit() and len(value) >= 10):
         error = ValueError
     elif command in ("change", "phone", "remove") and name not in address_book:
+        error = ValueError
+    elif command == "birthday" and len(value) != 10:
         error = ValueError
     else:
         error = None
@@ -108,11 +119,17 @@ def command_parser(command_input: str) -> tuple:
         name = command_split[1].lower().title() if len(command_split[1]) > 2 else None
         return command, name, None
     elif len(command_split) >= 3:
-        command = command_split[0].lower()
-        name = command_split[1].lower().title() if len(command_split[1]) > 2 else None
-        phone = command_split[2] if len(command_split[2]) >= 10 else None
-        sanitazed_phone = sphn(phone)
-        return command, name, sanitazed_phone
+        if "/" in command_split[2]:
+            command = command_split[0].lower()
+            name = command_split[1].lower().title() if len(command_split[1]) > 2 else None
+            birthday = command_split[2] if len(command_split[2]) == 10 else None
+            return command, name, birthday
+        else:
+            command = command_split[0].lower()
+            name = command_split[1].lower().title() if len(command_split[1]) > 2 else None
+            phone = command_split[2] if len(command_split[2]) >= 10 else None
+            sanitazed_phone = sphn(phone)
+            return command, name, sanitazed_phone
 
 
 def main():
